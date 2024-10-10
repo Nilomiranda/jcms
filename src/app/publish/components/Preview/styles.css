@@ -1,0 +1,73 @@
+.jcms-markdown-preview {
+    h1 {
+        @apply text-4xl font-bold text-gray-900;
+    }
+
+    h2 {
+        @apply text-3xl font-semibold text-gray-800;
+    }
+
+    h3 {
+        @apply text-2xl font-medium text-gray-700;
+    }
+
+    p {
+        @apply text-base text-gray-600 leading-relaxed;
+    }
+
+    span {
+        @apply text-sm text-gray-500;
+    }
+
+    a {
+        @apply text-blue-500 hover:underline;
+    }
+
+    blockquote {
+        @apply border-l-4 border-blue-500 pl-4 italic text-gray-600;
+    }
+
+    ul {
+        @apply list-disc list-inside;
+    }
+
+    ol {
+        @apply list-decimal list-inside;
+    }
+
+    li {
+        @apply mb-2;
+
+        ul {
+            @apply list-disc list-inside pl-2;
+
+            li {
+                @apply mb-2;
+            }
+        }
+    }
+
+    hr {
+        @apply border-t border-gray-300 my-6;
+    }
+
+    table {
+        @apply table-auto border-collapse w-full;
+    }
+
+    th {
+        @apply bg-gray-100 text-left px-4 py-2 border-b;
+    }
+
+    td {
+        @apply px-4 py-2 border-b;
+    }
+
+    strong {
+        @apply font-semibold;
+    }
+
+    em {
+        @apply italic;
+    }
+}

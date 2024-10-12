@@ -27,7 +27,7 @@ export const LoginForm = () => {
           {/*</Button>*/}
           <Button onClick={handleGoogleSignup} variant="outline" className="w-full">
             <Mail className="mr-2 h-4 w-4" />
-            Sign up with Google
+            Google
           </Button>
         </CardFooter>
       </Card>

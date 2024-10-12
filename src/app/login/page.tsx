@@ -1,14 +1,8 @@
 import {LoginForm} from "@/app/login/components/LoginForm";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
-import {redirect} from "next/navigation";
+import {serverSessionGuard} from "@/app/shared/guards/serverSessionGuard";
 
 export default async function LoginScreen() {
-  const session = await getServerSession(authOptions)
-
-  if (session?.user?.id) {
-    return redirect('/publish');
-  }
+  await serverSessionGuard({ shouldRedirect: false, ifLoggedInRedirectTo: '/publish' })
 
   return (
     <LoginForm />

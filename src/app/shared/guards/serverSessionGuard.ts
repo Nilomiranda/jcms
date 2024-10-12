@@ -9,7 +9,7 @@ export const serverSessionGuard = async ({ shouldRedirect, ifLoggedInRedirectTo 
     return redirect('/login');
   }
 
-  if (ifLoggedInRedirectTo) {
+  if (session?.user && ifLoggedInRedirectTo) {
     return redirect(ifLoggedInRedirectTo)
   }
 }

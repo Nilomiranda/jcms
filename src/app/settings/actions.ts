@@ -8,6 +8,7 @@ import {createId} from "@paralleldrive/cuid2";
 import * as bcrypt from "bcrypt";
 import {userGuard} from "@/app/shared/guards/userSessionGuard";
 import {and, eq} from "drizzle-orm";
+import {revalidateTag} from "next/cache";
 
 interface GenerateApiKeyInput {
   name: string;
@@ -31,9 +32,11 @@ export const generateApiKey = async ({ name }: GenerateApiKeyInput) => {
     }).returning()
 
     if (apiKey.id) {
+      revalidateTag('apiKey')
       return value;
     }
 
+    revalidateTag('apiKey')
     return '';
   } catch (e) {
     console.error('GenerateApiKeyError:: ', e)
@@ -59,6 +62,7 @@ export const deleteApiKeyById = async (id: string) => {
 
     const { deletedId } = deletedResult;
 
+    revalidateTag('apiKey')
     return deletedId;
   } catch (err) {
     console.error('DeleteApiKeyById:: ', err)

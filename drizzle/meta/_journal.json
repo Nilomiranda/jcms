@@ -8,6 +8,13 @@
       "when": 1728790741964,
       "tag": "0000_small_inhumans",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1728859247287,
+      "tag": "0001_simple_microchip",
+      "breakpoints": true
     }
   ]
 }

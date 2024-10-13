@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { AlertCircle, Copy, Key } from "lucide-react"
+import {AlertCircle, CheckIcon, Copy} from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {SubmitButton} from "@/components/form/SubmitButton";
+import {generateApiKey} from "@/app/settings/actions";
 
 // Simulated API key type
 type ApiKey = {
@@ -21,29 +23,51 @@ export const ApiKeySettings = () => {
   const [newKeyName, setNewKeyName] = useState('')
   const [showNewKeyModal, setShowNewKeyModal] = useState(false)
   const [newlyGeneratedKey, setNewlyGeneratedKey] = useState('')
+  const [copiedApiKey, setCopiedApiKey] = useState(false)
 
-  const generateApiKey = () => {
-    if (!newKeyName) return
-
-    const newKey = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: newKeyName,
-      createdAt: new Date(),
-      lastUsed: null
+  useEffect(() => {
+    if (!copiedApiKey) {
+      return;
     }
 
-    setApiKeys([...apiKeys, newKey])
-    setNewKeyName('')
-    setNewlyGeneratedKey(`${newKey.id}_${Math.random().toString(36).substr(2, 16)}`)
-    setShowNewKeyModal(true)
+    const timeout = setTimeout(() => {
+      setCopiedApiKey(false)
+    }, 3000)
+
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [copiedApiKey])
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    console.log({newKeyName})
+    if (!newKeyName) {
+      return;
+    }
+
+    try {
+      const key = await generateApiKey({name: newKeyName})
+      if (!key) {
+        console.error('GenerateApiKey::Error::', 'No api key generated.')
+        return;
+      }
+
+      setNewlyGeneratedKey(key);
+      setShowNewKeyModal(true)
+    } catch (err) {
+      console.error('GenerateApiKey::Error::', err)
+    }
   }
 
   const deleteApiKey = (id: string) => {
-    setApiKeys(apiKeys.filter(key => key.id !== id))
+    // TODO: implement delete logic
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
+  const copyToClipboard = async (text: string) => {
+    await navigator.clipboard.writeText(text)
+    setCopiedApiKey(true)
   }
 
   return (
@@ -52,14 +76,15 @@ export const ApiKeySettings = () => {
 
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Generate New API Key</h2>
-        <div className="flex space-x-2">
+        <form className="flex space-x-2" onSubmit={handleSubmit}>
           <Input
+            required
             placeholder="Enter key name"
             value={newKeyName}
             onChange={(e) => setNewKeyName(e.target.value)}
           />
-          <Button disabled={!newKeyName} onClick={generateApiKey}>Generate Key</Button>
-        </div>
+          <SubmitButton disabled={!newKeyName}>Generate Key</SubmitButton>
+        </form>
       </div>
 
       <div className="space-y-4">
@@ -81,7 +106,6 @@ export const ApiKeySettings = () => {
                 <TableRow key={key.id}>
                   <TableCell>{key.name}</TableCell>
                   <TableCell>{key.createdAt.toLocaleString()}</TableCell>
-                  <TableCell>{key.lastUsed ? key.lastUsed.toLocaleString() : 'Never'}</TableCell>
                   <TableCell>
                     <Button variant="destructive" onClick={() => deleteApiKey(key.id)}>Delete</Button>
                   </TableCell>
@@ -111,7 +135,7 @@ export const ApiKeySettings = () => {
             <div className="flex items-center space-x-2">
               <Input value={newlyGeneratedKey} readOnly />
               <Button size="icon" onClick={() => copyToClipboard(newlyGeneratedKey)}>
-                <Copy className="h-4 w-4" />
+                { copiedApiKey ? <CheckIcon className="h-4 w-4" /> : <Copy className="h-4 w-4" /> }
               </Button>
             </div>
           </div>

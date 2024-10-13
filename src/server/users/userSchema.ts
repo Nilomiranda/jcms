@@ -1,8 +1,8 @@
 import {sqliteTable, text} from "drizzle-orm/sqlite-core";
-import {createId} from "@paralleldrive/cuid2";
+import {columnsHelpers} from "@/server/helpers/columnsHelpers";
 
 export const users = sqliteTable('users', {
-  id: text('id').$defaultFn(() => createId()),
+  ...columnsHelpers,
   name: text('name').notNull(),
   email: text('email').notNull(),
   profilePictureUrl: text('profilePictureUrl'),

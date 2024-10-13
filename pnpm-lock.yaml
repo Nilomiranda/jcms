@@ -71,8 +71,8 @@ devDependencies:
     specifier: ^18
     version: 18.3.1
   drizzle-kit:
-    specifier: ^0.25.0
-    version: 0.25.0
+    specifier: 0.24.2
+    version: 0.24.2
   eslint:
     specifier: ^8
     version: 8.57.1
@@ -1895,8 +1895,8 @@ packages:
       esutils: 2.0.3
     dev: true
 
-  /drizzle-kit@0.25.0:
-    resolution: {integrity: sha512-Rcf0nYCAKizwjWQCY+d3zytyuTbDb81NcaPor+8NebESlUz1+9W3uGl0+r9FhU4Qal5Zv9j/7neXCSCe7DHzjA==}
+  /drizzle-kit@0.24.2:
+    resolution: {integrity: sha512-nXOaTSFiuIaTMhS8WJC2d4EBeIcN9OSt2A2cyFbQYBAZbi7lRsVGJNqDpEwPqYfJz38yxbY/UtbvBBahBfnExQ==}
     hasBin: true
     dependencies:
       '@drizzle-team/brocli': 0.10.1

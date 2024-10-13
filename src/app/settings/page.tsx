@@ -1,10 +1,9 @@
 import {Settings} from  './components/Settings'
-import {serverSessionGuard} from "@/app/shared/guards/serverSessionGuard";
-import {sessionUser} from "@/app/shared/sessionHelpers";
 import {db} from "@/config/database/setup";
 import {eq} from "drizzle-orm";
 import {ApiKey, apiKeys} from "@/server/apiKeys/apiKeySchema";
 import {User} from "@/server/users/userSchema";
+import {userGuard} from "@/app/shared/guards/userSessionGuard";
 
 const getUserApiKeys = async (user: User) => {
   const userApiKey: ApiKey | undefined = await db.query.apiKeys.findFirst({
@@ -18,8 +17,7 @@ const getUserApiKeys = async (user: User) => {
 }
 
 export default async function SettingsPage() {
-  await serverSessionGuard({ shouldRedirect: true })
-  const user = (await sessionUser())!
+  const user = await userGuard();
 
   const { userApiKey } = await getUserApiKeys(user);
 

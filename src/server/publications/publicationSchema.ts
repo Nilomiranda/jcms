@@ -16,7 +16,6 @@ export const publications = sqliteTable('publications', {
     length: 255
   })
     .notNull()
-    .unique()
     .references(() => users.id),
 
 })

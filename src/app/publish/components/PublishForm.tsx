@@ -1,14 +1,22 @@
 'use client'
 
-import {useRef, useState} from "react";
+import {ChangeEventHandler, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {AlignLeft, Bold, Italic, List, Send} from "lucide-react";
-import {mdContentExample} from "@/app/publish/components/Preview/contentMockup";
 import {Textarea} from "@/components/ui/textarea";
 import {Preview} from "@/app/publish/components/Preview/Preview";
+import {useToast} from "@/hooks/use-toast";
+import {savePublicationAsDraft} from "@/app/publish/actions";
+import {Publication} from "@/server/publications/publicationSchema";
 
-export const PublishForm = () => {
-  const [content, setContent] = useState('')
+interface PublishFormProps {
+  draftId?: string;
+  draft?: Publication;
+}
+
+export const PublishForm = ({ draftId, draft }: PublishFormProps) => {
+  const { toast } = useToast();
+  const [content, setContent] = useState(draft?.content || '')
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const resizeTextArea = () => {
@@ -18,7 +26,7 @@ export const PublishForm = () => {
     }
   }
 
-  const handleChange = (event) => {
+  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     setContent(event.target.value)
     resizeTextArea();
   }
@@ -28,6 +36,21 @@ export const PublishForm = () => {
     console.log('Publishing:', content)
     // Reset the editor after publishing
     setContent('')
+  }
+
+  const handleSaveDraftClick = async () => {
+    try {
+      await savePublicationAsDraft({ content, id: draftId });
+    } catch {
+      toast({
+        title: 'Draft error',
+        /**
+         * TODO: implement a local backup of the draft in case of an error.
+         */
+        description: 'Could not save draft. Keep a safe copy of your draft, refresh page and try again',
+        variant: 'destructive',
+      })
+    }
   }
 
   return (
@@ -53,10 +76,7 @@ export const PublishForm = () => {
             </Button>
           </div>
           <div className="flex items-center gap-x-2">
-            <Button variant="secondary" onClick={() => {
-              setContent(mdContentExample)
-              resizeTextArea();
-            }}>Use example content</Button>
+            <Button variant="secondary" onClick={handleSaveDraftClick}>Save draft</Button>
             <Button onClick={handlePublish} className="text-white">
               <Send className="h-4 w-4 mr-2"/>
               Publish

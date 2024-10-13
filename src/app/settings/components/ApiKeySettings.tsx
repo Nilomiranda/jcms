@@ -58,7 +58,7 @@ export const ApiKeySettings = () => {
             value={newKeyName}
             onChange={(e) => setNewKeyName(e.target.value)}
           />
-          <Button onClick={generateApiKey}>Generate Key</Button>
+          <Button disabled={!newKeyName} onClick={generateApiKey}>Generate Key</Button>
         </div>
       </div>
 

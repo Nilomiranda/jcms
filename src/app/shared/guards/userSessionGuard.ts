@@ -2,11 +2,8 @@ import {serverSessionGuard} from "@/app/shared/guards/serverSessionGuard";
 import {sessionUser} from "@/app/shared/sessionHelpers";
 
 export const userGuard = async () => {
-  const hasUser = await serverSessionGuard({ shouldRedirect: true })
+  await serverSessionGuard({ shouldRedirect: true })
+  const user = (await sessionUser())!
 
-  if (hasUser) {
-    return sessionUser();
-  }
-
-  return null;
+  return user;
 }

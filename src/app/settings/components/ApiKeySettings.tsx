@@ -8,15 +8,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import {AlertCircle, CheckIcon, Copy} from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {SubmitButton} from "@/components/form/SubmitButton";
-import {generateApiKey} from "@/app/settings/actions";
+import {deleteApiKeyById, generateApiKey} from "@/app/settings/actions";
 import {ApiKey} from "@/server/apiKeys/apiKeySchema";
 import {format} from "date-fns";
+import {useToast} from "@/hooks/use-toast";
 
 interface ApiKeySettingsProps {
   userApiKey?: ApiKey;
 }
 
 export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
+  const { toast } = useToast();
   const [newKeyName, setNewKeyName] = useState('')
   const [showNewKeyModal, setShowNewKeyModal] = useState(false)
   const [newlyGeneratedKey, setNewlyGeneratedKey] = useState('')
@@ -53,13 +55,39 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
 
       setNewlyGeneratedKey(key);
       setShowNewKeyModal(true)
-    } catch (err) {
-      console.error('GenerateApiKey::Error::', err)
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Create api key error',
+        description: 'Error when attempting to create api key. Please try again.',
+      })
     }
   }
 
-  const deleteApiKey = (id: string) => {
-    // TODO: implement delete logic
+  const deleteApiKey = async (id: string) => {
+    try {
+      const deletedId = await deleteApiKeyById(id);
+
+      if (deletedId) {
+        toast({
+          title: 'Successfully deleted api key.',
+        })
+
+        return;
+      }
+
+      toast({
+        variant: 'destructive',
+        title: 'Create api key error',
+        description: 'Error when attempting to create api key. Please try again.',
+      })
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Create api key error',
+        description: 'Error when attempting to create api key. Please try again.',
+      })
+    }
   }
 
   const copyToClipboard = async (text: string) => {
@@ -100,7 +128,7 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
             <TableBody>
               <TableRow>
                 <TableCell>{userApiKey.name}</TableCell>
-                <TableCell>{format(new Date(userApiKey.createdAt), 'yyyy-MM-dd')}</TableCell>
+                <TableCell>{format(new Date(userApiKey.createdAt!), 'yyyy-MM-dd')}</TableCell>
                 <TableCell>
                   <Button variant="destructive" onClick={() => deleteApiKey(userApiKey.id)}>Delete</Button>
                 </TableCell>

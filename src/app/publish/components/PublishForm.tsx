@@ -2,19 +2,22 @@
 
 import {ChangeEventHandler, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
-import {AlignLeft, Bold, Italic, List, Send} from "lucide-react";
+import {AlignLeft, Bold, Italic, List, Send, Trash} from "lucide-react";
 import {Textarea} from "@/components/ui/textarea";
 import {Preview} from "@/app/publish/components/Preview/Preview";
 import {useToast} from "@/hooks/use-toast";
-import {savePublicationAsDraft} from "@/app/publish/actions";
+import {deletePublicationById, savePublicationAsDraft} from "@/app/publish/actions";
 import {Publication} from "@/server/publications/publicationSchema";
 
 interface PublishFormProps {
   draftId?: string;
   draft?: Publication;
+
+  id?: string;
+  publication?: Publication
 }
 
-export const PublishForm = ({ draftId, draft }: PublishFormProps) => {
+export const PublishForm = ({ draftId, draft, publication, id }: PublishFormProps) => {
   const { toast } = useToast();
   const [content, setContent] = useState(draft?.content || '')
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
@@ -53,6 +56,24 @@ export const PublishForm = ({ draftId, draft }: PublishFormProps) => {
     }
   }
 
+  const handleDeleteClick = async () => {
+    const idToDelete = id || draftId
+
+    if (!idToDelete) {
+      return;
+    }
+
+    try {
+      await deletePublicationById(idToDelete)
+    } catch  {
+      toast({
+        title: 'Delete error',
+        description: 'Could not delete publication. Please try again later.',
+        variant: 'destructive',
+      })
+    }
+  }
+
   return (
     <div className="flex items-stretch h-full p-4 w-full">
       <div className="w-1/2 max-w-2xl mx-auto bg-white shadow-lg rounded-lg">
@@ -76,6 +97,10 @@ export const PublishForm = ({ draftId, draft }: PublishFormProps) => {
             </Button>
           </div>
           <div className="flex items-center gap-x-2">
+            { (id || draftId) && <Button variant="destructive" onClick={handleDeleteClick}>
+                <Trash className="h-4 w-4 mr-2"/>
+                Delete
+            </Button> }
             <Button variant="secondary" onClick={handleSaveDraftClick}>Save draft</Button>
             <Button onClick={handlePublish} className="text-white">
               <Send className="h-4 w-4 mr-2"/>

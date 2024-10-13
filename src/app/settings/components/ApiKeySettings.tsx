@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {FormEventHandler, useEffect, useState} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -38,7 +38,7 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
     }
   }, [copiedApiKey])
 
-  const handleSubmit = async (event) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
 
     console.log({newKeyName})

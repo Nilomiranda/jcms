@@ -9,17 +9,14 @@ import {AlertCircle, CheckIcon, Copy} from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {SubmitButton} from "@/components/form/SubmitButton";
 import {generateApiKey} from "@/app/settings/actions";
+import {ApiKey} from "@/server/apiKeys/apiKeySchema";
+import {format} from "date-fns";
 
-// Simulated API key type
-type ApiKey = {
-  id: string
-  name: string
-  createdAt: Date
-  lastUsed: Date | null
+interface ApiKeySettingsProps {
+  userApiKey?: ApiKey;
 }
 
-export const ApiKeySettings = () => {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
+export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
   const [newKeyName, setNewKeyName] = useState('')
   const [showNewKeyModal, setShowNewKeyModal] = useState(false)
   const [newlyGeneratedKey, setNewlyGeneratedKey] = useState('')
@@ -89,7 +86,7 @@ export const ApiKeySettings = () => {
 
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Active API Keys</h2>
-        {apiKeys.length === 0 ? (
+        {!userApiKey ? (
           <p>No active API keys</p>
         ) : (
           <Table>
@@ -97,20 +94,17 @@ export const ApiKeySettings = () => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Created At</TableHead>
-                <TableHead>Last Used</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {apiKeys.map((key) => (
-                <TableRow key={key.id}>
-                  <TableCell>{key.name}</TableCell>
-                  <TableCell>{key.createdAt.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Button variant="destructive" onClick={() => deleteApiKey(key.id)}>Delete</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              <TableRow>
+                <TableCell>{userApiKey.name}</TableCell>
+                <TableCell>{format(new Date(userApiKey.createdAt), 'yyyy-MM-dd')}</TableCell>
+                <TableCell>
+                  <Button variant="destructive" onClick={() => deleteApiKey(userApiKey.id)}>Delete</Button>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         )}

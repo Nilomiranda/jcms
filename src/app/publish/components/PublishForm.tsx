@@ -11,6 +11,7 @@ import {
   savePublicationAsDraft,
 } from "@/app/publish/actions";
 import { Publication } from "@/server/publications/publicationSchema";
+import { Input } from "@/components/ui/input";
 
 interface PublishFormProps {
   draftId?: string;
@@ -27,6 +28,8 @@ export const PublishForm = ({
   id,
 }: PublishFormProps) => {
   const { toast } = useToast();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [content, setContent] = useState(draft?.content || "");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -86,6 +89,23 @@ export const PublishForm = ({
   return (
     <div className="flex items-stretch h-full p-4 w-full">
       <div className="w-1/2 max-w-2xl mx-auto bg-white shadow-lg rounded-lg">
+        <div className="flex flex-col px-4 pb-4 gap-4">
+          <Input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+            className="text-2xl text-gray-500 font-bold"
+          />
+          <Input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+            className="text-sm text-gray-500"
+          />
+        </div>
+
         <div className="mb-4 flex justify-between items-center py-2 px-6 bg-gray-100">
           <div className="space-x-2">
             <Button variant="ghost" size="icon">

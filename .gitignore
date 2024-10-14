@@ -39,3 +39,5 @@ next-env.d.ts
 /.idea/modules.xml
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/vcs.xml
+/.idea/jsLinters/eslint.xml
+/.idea/prettier.xml

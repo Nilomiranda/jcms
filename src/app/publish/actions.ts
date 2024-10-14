@@ -12,10 +12,14 @@ import { and, eq } from "drizzle-orm";
 interface SavePublicationAsDraftInput {
   id?: string;
   content: string;
+  title: string;
+  description?: string;
 }
 
 export const savePublicationAsDraft = async ({
   content,
+  title,
+  description,
   id,
 }: SavePublicationAsDraftInput) => {
   const user = await userGuard();
@@ -25,6 +29,8 @@ export const savePublicationAsDraft = async ({
       .insert(publications)
       .values({
         id,
+        title,
+        description,
         status: PublicationStatus.DRAFT,
         content,
         userId: user.id,

@@ -27,10 +27,15 @@ export const PublishForm = ({
   publication,
   id,
 }: PublishFormProps) => {
+  const existingContent = publication?.content || draft?.content || "";
+  const existingTitle = publication?.title || draft?.title || "";
+  const existingDescription =
+    publication?.description || draft?.description || "";
+
   const { toast } = useToast();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [content, setContent] = useState(draft?.content || "");
+  const [title, setTitle] = useState(existingTitle);
+  const [description, setDescription] = useState(existingDescription);
+  const [content, setContent] = useState(existingContent);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const resizeTextArea = () => {
@@ -54,7 +59,12 @@ export const PublishForm = ({
 
   const handleSaveDraftClick = async () => {
     try {
-      await savePublicationAsDraft({ content, id: draftId });
+      await savePublicationAsDraft({
+        content,
+        title,
+        description,
+        id: draftId,
+      });
     } catch {
       toast({
         title: "Draft error",

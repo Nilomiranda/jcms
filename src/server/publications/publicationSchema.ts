@@ -11,6 +11,8 @@ export enum PublicationStatus {
 export const publications = sqliteTable("publications", {
   ...columnsHelpers,
   content: text("name").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
   status: text("status", {
     enum: [Object.values(PublicationStatus) as unknown as string],
   })

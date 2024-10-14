@@ -16,7 +16,17 @@ interface SavePublicationInput {
   description?: string;
 }
 
+export const editArticle = async ({
+  id,
+  content,
+  title,
+  description,
+}: SavePublicationInput) => {
+  await publishArticle({ id, content, title, description });
+};
+
 export const publishArticle = async ({
+  id,
   content,
   title,
   description,
@@ -27,6 +37,7 @@ export const publishArticle = async ({
     const createdPublication = await db
       .insert(publications)
       .values({
+        id,
         title,
         description,
         status: PublicationStatus.PUBLISHED,
@@ -35,7 +46,12 @@ export const publishArticle = async ({
       })
       .onConflictDoUpdate({
         target: publications.id,
-        set: { content, status: PublicationStatus.PUBLISHED },
+        set: {
+          content,
+          title,
+          description,
+          status: PublicationStatus.PUBLISHED,
+        },
       })
       .returning();
 

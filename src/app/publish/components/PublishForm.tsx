@@ -8,6 +8,7 @@ import { Preview } from "@/app/publish/components/Preview/Preview";
 import { useToast } from "@/hooks/use-toast";
 import {
   deletePublicationById,
+  editArticle,
   publishArticle,
   savePublicationAsDraft,
 } from "@/app/publish/actions";
@@ -51,6 +52,23 @@ export const PublishForm = ({
   const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     setContent(event.target.value);
     resizeTextArea();
+  };
+
+  const handleEdit = async () => {
+    try {
+      await editArticle({
+        id,
+        content,
+        title,
+        description,
+      });
+    } catch {
+      toast({
+        title: "Publication error",
+        description: "Could not save changes. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handlePublish = async () => {
@@ -160,7 +178,10 @@ export const PublishForm = ({
                 Save draft
               </Button>
             )}
-            <Button onClick={handlePublish} className="text-white">
+            <Button
+              onClick={isEditingPublishedContent ? handleEdit : handlePublish}
+              className="text-white"
+            >
               {isEditingPublishedContent ? (
                 <Save className="h-4 w-4 mr-2" />
               ) : (

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import {TopNavBar} from "@/app/shared/components/TopNavBar";
-import {Toaster} from "@/components/ui/toaster";
+import { TopNavBar } from "@/app/shared/components/TopNavBar";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,9 +32,7 @@ export default function RootLayout({
       >
         <main className="w-full h-full flex flex-col">
           <TopNavBar />
-          <div className="flex-1">
-            {children}
-          </div>
+          <div className="flex-1">{children}</div>
           <Toaster />
         </main>
       </body>

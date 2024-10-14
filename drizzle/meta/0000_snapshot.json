@@ -47,9 +47,7 @@
       "indexes": {
         "apiKeys_userId_unique": {
           "name": "apiKeys_userId_unique",
-          "columns": [
-            "userId"
-          ],
+          "columns": ["userId"],
           "isUnique": true
         }
       },
@@ -58,12 +56,8 @@
           "name": "apiKeys_userId_users_id_fk",
           "tableFrom": "apiKeys",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

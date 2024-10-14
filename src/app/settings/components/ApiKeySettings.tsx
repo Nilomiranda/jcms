@@ -1,17 +1,31 @@
-'use client'
+"use client";
 
-import {FormEventHandler, useEffect, useState} from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import {AlertCircle, CheckIcon, Copy} from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import {SubmitButton} from "@/components/form/SubmitButton";
-import {deleteApiKeyById, generateApiKey} from "@/app/settings/actions";
-import {ApiKey} from "@/server/apiKeys/apiKeySchema";
-import {format} from "date-fns";
-import {useToast} from "@/hooks/use-toast";
+import { FormEventHandler, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { AlertCircle, CheckIcon, Copy } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { SubmitButton } from "@/components/form/SubmitButton";
+import { deleteApiKeyById, generateApiKey } from "@/app/settings/actions";
+import { ApiKey } from "@/server/apiKeys/apiKeySchema";
+import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 interface ApiKeySettingsProps {
   userApiKey?: ApiKey;
@@ -19,10 +33,10 @@ interface ApiKeySettingsProps {
 
 export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
   const { toast } = useToast();
-  const [newKeyName, setNewKeyName] = useState('')
-  const [showNewKeyModal, setShowNewKeyModal] = useState(false)
-  const [newlyGeneratedKey, setNewlyGeneratedKey] = useState('')
-  const [copiedApiKey, setCopiedApiKey] = useState(false)
+  const [newKeyName, setNewKeyName] = useState("");
+  const [showNewKeyModal, setShowNewKeyModal] = useState(false);
+  const [newlyGeneratedKey, setNewlyGeneratedKey] = useState("");
+  const [copiedApiKey, setCopiedApiKey] = useState(false);
 
   useEffect(() => {
     if (!copiedApiKey) {
@@ -30,39 +44,40 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
     }
 
     const timeout = setTimeout(() => {
-      setCopiedApiKey(false)
-    }, 3000)
+      setCopiedApiKey(false);
+    }, 3000);
 
     return () => {
       clearTimeout(timeout);
-    }
-  }, [copiedApiKey])
+    };
+  }, [copiedApiKey]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
 
-    console.log({newKeyName})
+    console.log({ newKeyName });
     if (!newKeyName) {
       return;
     }
 
     try {
-      const key = await generateApiKey({name: newKeyName})
+      const key = await generateApiKey({ name: newKeyName });
       if (!key) {
-        console.error('GenerateApiKey::Error::', 'No api key generated.')
+        console.error("GenerateApiKey::Error::", "No api key generated.");
         return;
       }
 
       setNewlyGeneratedKey(key);
-      setShowNewKeyModal(true)
+      setShowNewKeyModal(true);
     } catch {
       toast({
-        variant: 'destructive',
-        title: 'Create api key error',
-        description: 'Error when attempting to create api key. Please try again.',
-      })
+        variant: "destructive",
+        title: "Create api key error",
+        description:
+          "Error when attempting to create api key. Please try again.",
+      });
     }
-  }
+  };
 
   const deleteApiKey = async (id: string) => {
     try {
@@ -70,30 +85,32 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
 
       if (deletedId) {
         toast({
-          title: 'Successfully deleted api key.',
-        })
+          title: "Successfully deleted api key.",
+        });
 
         return;
       }
 
       toast({
-        variant: 'destructive',
-        title: 'Create api key error',
-        description: 'Error when attempting to create api key. Please try again.',
-      })
+        variant: "destructive",
+        title: "Create api key error",
+        description:
+          "Error when attempting to create api key. Please try again.",
+      });
     } catch {
       toast({
-        variant: 'destructive',
-        title: 'Create api key error',
-        description: 'Error when attempting to create api key. Please try again.',
-      })
+        variant: "destructive",
+        title: "Create api key error",
+        description:
+          "Error when attempting to create api key. Please try again.",
+      });
     }
-  }
+  };
 
   const copyToClipboard = async (text: string) => {
-    await navigator.clipboard.writeText(text)
-    setCopiedApiKey(true)
-  }
+    await navigator.clipboard.writeText(text);
+    setCopiedApiKey(true);
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-8">
@@ -128,9 +145,16 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
             <TableBody>
               <TableRow>
                 <TableCell>{userApiKey.name}</TableCell>
-                <TableCell>{format(new Date(userApiKey.createdAt!), 'yyyy-MM-dd')}</TableCell>
                 <TableCell>
-                  <Button variant="destructive" onClick={() => deleteApiKey(userApiKey.id)}>Delete</Button>
+                  {format(new Date(userApiKey.createdAt!), "yyyy-MM-dd")}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteApiKey(userApiKey.id)}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -143,7 +167,8 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
           <DialogHeader>
             <DialogTitle>New API Key Generated</DialogTitle>
             <DialogDescription>
-              Please copy your new API key. For security reasons, it will only be shown once.
+              Please copy your new API key. For security reasons, it will only
+              be shown once.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -151,13 +176,21 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Warning</AlertTitle>
               <AlertDescription>
-                Make sure to copy your API key now. You won't be able to see it again!
+                Make sure to copy your API key now. You won't be able to see it
+                again!
               </AlertDescription>
             </Alert>
             <div className="flex items-center space-x-2">
               <Input value={newlyGeneratedKey} readOnly />
-              <Button size="icon" onClick={() => copyToClipboard(newlyGeneratedKey)}>
-                { copiedApiKey ? <CheckIcon className="h-4 w-4" /> : <Copy className="h-4 w-4" /> }
+              <Button
+                size="icon"
+                onClick={() => copyToClipboard(newlyGeneratedKey)}
+              >
+                {copiedApiKey ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -167,5 +200,5 @@ export const ApiKeySettings = ({ userApiKey }: ApiKeySettingsProps) => {
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  );
+};

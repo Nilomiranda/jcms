@@ -9,19 +9,53 @@ import {
 import { redirect } from "next/navigation";
 import { and, eq } from "drizzle-orm";
 
-interface SavePublicationAsDraftInput {
+interface SavePublicationInput {
   id?: string;
   content: string;
   title: string;
   description?: string;
 }
 
+export const publishArticle = async ({
+  content,
+  title,
+  description,
+}: SavePublicationInput) => {
+  const user = await userGuard();
+
+  try {
+    const createdPublication = await db
+      .insert(publications)
+      .values({
+        title,
+        description,
+        status: PublicationStatus.PUBLISHED,
+        content,
+        userId: user.id,
+      })
+      .onConflictDoUpdate({
+        target: publications.id,
+        set: { content, status: PublicationStatus.PUBLISHED },
+      })
+      .returning();
+
+    if (createdPublication) {
+      redirect(`/publish/${createdPublication[0].id}`);
+    }
+
+    throw new Error("Error publishing.");
+  } catch (err) {
+    console.error("PublishArticle::Error:: ", err);
+    throw err;
+  }
+};
+
 export const savePublicationAsDraft = async ({
   content,
   title,
   description,
   id,
-}: SavePublicationAsDraftInput) => {
+}: SavePublicationInput) => {
   const user = await userGuard();
 
   try {

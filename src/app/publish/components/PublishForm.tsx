@@ -2,12 +2,13 @@
 
 import { ChangeEventHandler, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlignLeft, Bold, Italic, List, Send, Trash } from "lucide-react";
+import { AlignLeft, Bold, Italic, List, Save, Send, Trash } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Preview } from "@/app/publish/components/Preview/Preview";
 import { useToast } from "@/hooks/use-toast";
 import {
   deletePublicationById,
+  publishArticle,
   savePublicationAsDraft,
 } from "@/app/publish/actions";
 import { Publication } from "@/server/publications/publicationSchema";
@@ -32,6 +33,8 @@ export const PublishForm = ({
   const existingDescription =
     publication?.description || draft?.description || "";
 
+  const isEditingPublishedContent = Boolean(id);
+
   const { toast } = useToast();
   const [title, setTitle] = useState(existingTitle);
   const [description, setDescription] = useState(existingDescription);
@@ -50,11 +53,20 @@ export const PublishForm = ({
     resizeTextArea();
   };
 
-  const handlePublish = () => {
-    // Here you would typically send the content to your headless CMS
-    console.log("Publishing:", content);
-    // Reset the editor after publishing
-    setContent("");
+  const handlePublish = async () => {
+    try {
+      await publishArticle({
+        content,
+        title,
+        description,
+      });
+    } catch {
+      toast({
+        title: "Publication error",
+        description: "Could not publish. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSaveDraftClick = async () => {
@@ -118,22 +130,23 @@ export const PublishForm = ({
 
         <div className="mb-4 flex justify-between items-center py-2 px-6 bg-gray-100">
           <div className="space-x-2">
-            <Button variant="ghost" size="icon">
-              <Bold className="h-4 w-4" />
-              <span className="sr-only">Bold</span>
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Italic className="h-4 w-4" />
-              <span className="sr-only">Italic</span>
-            </Button>
-            <Button variant="ghost" size="icon">
-              <List className="h-4 w-4" />
-              <span className="sr-only">List</span>
-            </Button>
-            <Button variant="ghost" size="icon">
-              <AlignLeft className="h-4 w-4" />
-              <span className="sr-only">Align Left</span>
-            </Button>
+            {/* TODO: implement text formatting buttons */}
+            {/*<Button variant="ghost" size="icon">*/}
+            {/*  <Bold className="h-4 w-4" />*/}
+            {/*  <span className="sr-only">Bold</span>*/}
+            {/*</Button>*/}
+            {/*<Button variant="ghost" size="icon">*/}
+            {/*  <Italic className="h-4 w-4" />*/}
+            {/*  <span className="sr-only">Italic</span>*/}
+            {/*</Button>*/}
+            {/*<Button variant="ghost" size="icon">*/}
+            {/*  <List className="h-4 w-4" />*/}
+            {/*  <span className="sr-only">List</span>*/}
+            {/*</Button>*/}
+            {/*<Button variant="ghost" size="icon">*/}
+            {/*  <AlignLeft className="h-4 w-4" />*/}
+            {/*  <span className="sr-only">Align Left</span>*/}
+            {/*</Button>*/}
           </div>
           <div className="flex items-center gap-x-2">
             {(id || draftId) && (
@@ -142,12 +155,19 @@ export const PublishForm = ({
                 Delete
               </Button>
             )}
-            <Button variant="secondary" onClick={handleSaveDraftClick}>
-              Save draft
-            </Button>
+            {!isEditingPublishedContent && (
+              <Button variant="secondary" onClick={handleSaveDraftClick}>
+                Save draft
+              </Button>
+            )}
             <Button onClick={handlePublish} className="text-white">
-              <Send className="h-4 w-4 mr-2" />
-              Publish
+              {isEditingPublishedContent ? (
+                <Save className="h-4 w-4 mr-2" />
+              ) : (
+                <Send className="h-4 w-4 mr-2" />
+              )}
+
+              {isEditingPublishedContent ? "Save" : "Publish"}
             </Button>
           </div>
         </div>

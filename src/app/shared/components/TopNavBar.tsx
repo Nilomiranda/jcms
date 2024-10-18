@@ -24,7 +24,7 @@ export const TopNavBar = () => {
   return (
     <nav className="top-0 left-0 right-0 z-50 bg-background border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between space-x-4 py-4">
+        <div className="flex items-center justify-between py-4">
           <Button variant="ghost" asChild>
             <Link href="/publications">
               <FileText className="w-4 h-4 mr-2" />
